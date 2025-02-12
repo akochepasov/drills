@@ -12,15 +12,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_CXX_EXTENSIONS NO)
 
-# Some extra logging for the user:
-message(STATUS "----------------------------------------")
-message(STATUS "CMAKE_SYSTEM_NAME:     ${CMAKE_SYSTEM_NAME}")
-message(STATUS "CMAKE_BUILD_TYPE:      ${CMAKE_BUILD_TYPE}")
-message(STATUS "CMAKE_GENERATOR:       ${CMAKE_GENERATOR}")
-message(STATUS "CMAKE_COMMAND:         ${CMAKE_COMMAND}")
-message(STATUS "CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
-message(STATUS "----------------------------------------")
-
 # Default to Release if no build type is set:
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -30,6 +21,15 @@ endif()
 if(NOT DEFINED CMAKE_BUILD_PARALLEL_LEVEL)
   set(CMAKE_BUILD_PARALLEL_LEVEL 16 CACHE STRING "Default parallel build level" FORCE)
 endif()
+
+# Some extra logging for the user:
+message(STATUS "----------------------------------------")
+message(STATUS "CMAKE_SYSTEM_NAME:     ${CMAKE_SYSTEM_NAME}")
+message(STATUS "CMAKE_BUILD_TYPE:      ${CMAKE_BUILD_TYPE}")
+message(STATUS "CMAKE_GENERATOR:       ${CMAKE_GENERATOR}")
+message(STATUS "CMAKE_COMMAND:         ${CMAKE_COMMAND}")
+message(STATUS "CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
+message(STATUS "----------------------------------------")
 
 # ------------------------------------------------------------------------------
 # Deps
@@ -44,6 +44,7 @@ FetchContent_Declare(
   GoogleTest
   GIT_REPOSITORY https://github.com/google/googletest.git
   GIT_TAG v1.15.2
+  GIT_SHALLOW 1
 )
 FetchContent_MakeAvailable(GoogleTest)
 
@@ -52,6 +53,7 @@ FetchContent_Declare(
   GoogleBenchmark
   GIT_REPOSITORY https://github.com/google/benchmark.git
   GIT_TAG v1.9.1
+  GIT_SHALLOW 1
 )
 
 # Suppress building tests/docs/etc. for faster builds:
@@ -63,7 +65,7 @@ set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
 set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE BOOL "" FORCE)
 set(BENCHMARK_USE_BUNDLED_GTEST ON CACHE BOOL "" FORCE)
 set(BENCHMARK_ENABLE_LIBPFM OFF CACHE BOOL "" FORCE)
-#set(HAVE_STD_REGEX ON)
+set(HAVE_STD_REGEX ON)
 
 FetchContent_MakeAvailable(GoogleBenchmark)
 
@@ -72,6 +74,7 @@ FetchContent_Declare(
   VictorZverovichFMT
   GIT_REPOSITORY https://github.com/fmtlib/fmt.git
   GIT_TAG 11.1.2
+  GIT_SHALLOW 1
 )
 FetchContent_MakeAvailable(VictorZverovichFMT)
 
@@ -81,6 +84,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
   target_compile_definitions(benchmark PRIVATE NDEBUG)
 endif()
 
+enable_testing()
 
 # Add source to this project's executable.
 add_executable (drills "drills.cpp")
@@ -89,7 +93,9 @@ set_target_properties(drills PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_link_libraries(drills
   PRIVATE
-  benchmark
+  GTest::gtest_main
   fmt::fmt
 )
 
+include(GoogleTest)
+gtest_discover_tests(drills)
