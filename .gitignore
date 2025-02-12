@@ -6,6 +6,8 @@ build/
 build-debug/
 build-release/
 
+# IDE files
+.vscode/
 
 # Prerequisites
 *.d
