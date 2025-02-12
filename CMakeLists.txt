@@ -69,14 +69,14 @@ set(HAVE_STD_REGEX ON)
 
 FetchContent_MakeAvailable(GoogleBenchmark)
 
-# FMT for logging, as `std::format` has limited functionality
-FetchContent_Declare(
-  VictorZverovichFMT
-  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG 11.1.2
-  GIT_SHALLOW 1
-)
-FetchContent_MakeAvailable(VictorZverovichFMT)
+# # FMT for logging, as `std::format` has limited functionality
+# FetchContent_Declare(
+#   VictorZverovichFMT
+#   GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+#   GIT_TAG 11.1.2
+#   GIT_SHALLOW 1
+# )
+# FetchContent_MakeAvailable(VictorZverovichFMT)
 
 
 # Remove Google Benchmark's built-in debug warning in Release mode:
@@ -85,16 +85,22 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
 endif()
 
 enable_testing()
+file(GLOB TEST_SOURCES LIST_DIRECTORIES false 
+  ${PROJECT_SOURCE_DIR}/two-pointers/*.cpp
+)
 
 # Add source to this project's executable.
-add_executable (drills "drills.cpp")
+add_executable (drills "drills.cpp" ${TEST_SOURCES})
 
-set_target_properties(drills PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(drills PROPERTIES 
+  POSITION_INDEPENDENT_CODE ON)
+
+target_include_directories(drills PRIVATE "include")
 
 target_link_libraries(drills
   PRIVATE
   GTest::gtest_main
-  fmt::fmt
+  # fmt::fmt
 )
 
 include(GoogleTest)
