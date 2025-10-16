@@ -39,11 +39,11 @@ include(FetchContent)
 include(ExternalProject)
 
 
-# GTest (required by Google Benchmark)
+# GTest, last one with C++14 (required by Google Benchmark)
 FetchContent_Declare(
   GoogleTest
   GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG v1.15.2
+  GIT_TAG v1.16.0
   GIT_SHALLOW 1
 )
 FetchContent_MakeAvailable(GoogleTest)
@@ -52,7 +52,7 @@ FetchContent_MakeAvailable(GoogleTest)
 FetchContent_Declare(
   GoogleBenchmark
   GIT_REPOSITORY https://github.com/google/benchmark.git
-  GIT_TAG v1.9.1
+  GIT_TAG v1.9.4
   GIT_SHALLOW 1
 )
 
@@ -93,6 +93,8 @@ file(GLOB TEST_SOURCES LIST_DIRECTORIES false
 # Add source to this project's executable.
 add_executable (drills "drills.cpp" ${TEST_SOURCES})
 
+option(DRILLS_BUILD_TESTS "Build the test suite" ON)
+
 set_target_properties(drills PROPERTIES 
   POSITION_INDEPENDENT_CODE ON)
 
@@ -101,6 +103,7 @@ target_include_directories(drills PRIVATE "include")
 target_link_libraries(drills
   PRIVATE
   GTest::gtest_main
+  benchmark::benchmark
   # fmt::fmt
 )
 

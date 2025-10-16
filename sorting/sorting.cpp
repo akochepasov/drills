@@ -6,17 +6,20 @@
 class SortingTest : public testing::Test {
     // If unsorted, sort them first
     protected:
-        constexpr static size_t N = 10;
+        std::random_device rd;
+        constexpr static size_t N = 100;
         std::vector<int> arr;
         std::vector<int> expected;
     public:
         void SetUp() {
-            std::random_device rd;
             std::mt19937 gen(rd());
             std::uniform_int_distribution<int> dist(-100, 100);
 
-            arr.reserve(N);
-            std::generate_n(std::back_inserter(arr), N, [&](){ return dist(gen); });
+            arr.resize(N);
+
+            // std::iota(ALL(arr), 0);
+            // std::shuffle(ALL(arr), gen);
+            std::generate_n(arr.begin(), N, [&](){ return dist(gen); });
 
             expected.assign(ALL(arr));
             std::sort(ALL(expected));

@@ -1,4 +1,4 @@
-/********   Header Files ********/
+/********   Header File ********/
 #include <iostream>
 #include <sstream>
 #include <stdio.h>
@@ -58,6 +58,7 @@ typedef vector<string> VS;
 #define FOR(i, k, n)   for (decltype(n) i=k; i<(n); i++)
 #define FORV(i, a)     FOR(i, 0, (int)SZ(a))
 #define FORVV(j, i, a) FORV(j, a) FORV(i,(a)[j])
+
 #define RFOR(i, j, n)  for (decltype(n) i=(n - 1); (i + 1) > j; i--)
 // RFOR is also FOR(_i, 0, n) { auto i = n - _i - 1;
 
@@ -139,3 +140,5 @@ static const auto fastIO = []() {
     std::cout.tie(nullptr);
     return 0;
 }();
+
+/******** End of Header File ********/
