@@ -3,6 +3,32 @@
 #include <gtest/gtest.h>
 
 
+void InsertionSort(std::vector<int>& arr) {
+    FOR(i, 1, SZ(arr)) {
+        int k = arr[i];
+        int j = i - 1;
+        while (j >= 0 && k < arr[j]) {
+            arr[j+1] = arr[j];
+            j--;
+        }
+        arr[j+1] = k;
+    }
+}
+
+void BubbleSort(std::vector<int>& arr) {
+    bool swapped;
+    FOR(i, 0, SZ(arr)-1) {
+        swapped = false;
+        FOR(j, 0, SZ(arr)-i-1) {
+            if (arr[j] > arr[j+1]) {
+                std::swap(arr[j], arr[j+1]);
+                swapped = true;
+            }
+        }
+        if (!swapped) break;
+    }
+}
+
 class SortingTest : public testing::Test {
     // If unsorted, sort them first
     protected:
@@ -27,15 +53,13 @@ class SortingTest : public testing::Test {
 };
 
 TEST_F(SortingTest, InsertionSort) {
-    FOR(i, 1, SZ(arr)) {
-        int k = arr[i];
-        int j = i - 1;
-        while (j >= 0 && k < arr[j]) {
-            arr[j+1] = arr[j];
-            j--;
-        }
-        arr[j+1] = k;
-    }
+    InsertionSort(arr);
+
+    EXPECT_EQ(arr, expected);
+}
+
+TEST_F(SortingTest, BubbleSort) {
+    BubbleSort(arr);
 
     EXPECT_EQ(arr, expected);
 }
