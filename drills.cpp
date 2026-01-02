@@ -1,9 +1,3 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-
-#include <iostream>
-#include <random>
 
 #include <gtest/gtest.h>
 

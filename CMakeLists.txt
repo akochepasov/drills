@@ -87,6 +87,7 @@ endif()
 enable_testing()
 file(GLOB TEST_SOURCES LIST_DIRECTORIES false 
   ${PROJECT_SOURCE_DIR}/two-pointers/*.cpp
+  ${PROJECT_SOURCE_DIR}/multithreading/*.cpp
   ${PROJECT_SOURCE_DIR}/sorting/*.cpp
   ${PROJECT_SOURCE_DIR}/math/*.cpp
 )

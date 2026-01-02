@@ -1,9 +1,11 @@
 /********   Header File ********/
-#include <iostream>
-#include <sstream>
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
+#include <stdlib.h>
 
+#include <iostream>
+#include <sstream>
 #include <string>
 
 #include <vector>
@@ -15,23 +17,15 @@
 #include <set>
 #include <unordered_set>
 #include <unordered_map>
-
 #include <bitset>
-#include <memory>
 
-#include <algorithm>
+#include <memory>
 #include <functional>
+#include <algorithm>
 #include <numeric>
 #include <utility>
 #include <random>
 #include <limits>
-
-#include <stdint.h>
-#include <math.h>
-#include <time.h>
-
-#include <cassert>
-#include <cstdlib>
 
 using namespace std;
 
