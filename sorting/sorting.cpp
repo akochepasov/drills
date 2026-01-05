@@ -1,10 +1,11 @@
+#include <array>
 #include <drillheader.h>
 #include <gtest/gtest.h>
 
-using ArrayGenerator = std::function<void(std::vector<int>&)>;
-
 // Array generators
 namespace gen {
+    using ArrayGenerator = std::function<void(std::vector<int>&)>;
+
     void uniform_random(std::vector<int>& arr) {
         std::random_device rd;
         std::mt19937 gen(rd());
@@ -34,7 +35,7 @@ void InsertionSort(std::vector<int>& arr) {
 
 void BubbleSort(std::vector<int>& arr) {
     bool swapped;
-    FOR(i, 0, SZ(arr)-1) {
+    FOR(i, 0, SZ(arr)) {
         swapped = false;
         FOR(j, 0, SZ(arr)-i-1) {
             if (arr[j] > arr[j+1]) {
@@ -46,12 +47,30 @@ void BubbleSort(std::vector<int>& arr) {
     }
 }
 
+size_t LowerBound(std::vector<int>& arr, int v) {
+    
+    if (arr.size() == 0) return arr.size();
+
+    size_t l = 0, r = arr.size();
+
+    while (l < r) {
+        auto m = l + (r - l) / 2;
+
+        if (arr[m] < v)
+            l = m + 1;
+        else
+            r = m;
+    }
+
+    return (l < arr.size() && arr[l] < v) ? r + 1 : l;
+}
+
 struct ArrayParams {
-    ArrayGenerator generator;
+    gen::ArrayGenerator generator;
     size_t size;
     std::string name;
 
-    ArrayParams(ArrayGenerator gen, size_t sz, std::string n) 
+    ArrayParams(gen::ArrayGenerator gen, size_t sz, std::string n) 
         : generator(gen), size(sz), name(std::move(n)) {}
 };
 
@@ -81,12 +100,33 @@ TEST_P(SortingTest, BubbleSort) {
     EXPECT_EQ(arr, expected);
 }
 
+TEST_P(SortingTest, LowerBound) {
+    std::sort(ALL(arr));
+
+    int m = arr.size() / 2;
+    int m2 = min<int>(3, m / 2);
+    int m3 = min<int>(2, 2 * m / 3);
+    std::array<int, 5> ndxs = {0, static_cast<int>(arr.size()), 1, m, m2};
+
+    for (auto i : ndxs) {
+        auto v = (i < arr.size()) ? arr[i] : i;
+        size_t lb = LowerBound(arr, v);
+        auto it = std::lower_bound(ALL(arr), v);
+        size_t lbe = (it != arr.end()) ? it - arr.begin() : arr.size();
+        EXPECT_EQ(lb, lbe);
+    }
+}
+
 std::vector<ArrayParams> GenerateTestCases() {
     return {
+        ArrayParams(gen::uniform_random, 1, "OneElement1"),
+        ArrayParams(gen::uniform_random, 1, "OneElement2"),
+        ArrayParams(gen::uniform_random, 1, "OneElement3"),
         ArrayParams(gen::uniform_random, 100, "UniformRandom100"),
         ArrayParams(gen::uniform_random, 1'000, "UniformRandom1M"),
         ArrayParams(gen::sequential, 100, "Sequential100"),
         ArrayParams(gen::sequential, 1'000, "Sequential1M"),
+        ArrayParams(gen::uniform_random, 0, "Empty"),
     };
 }
 
