@@ -14,7 +14,8 @@ set(CMAKE_CXX_EXTENSIONS NO)
 
 # Default to Release if no build type is set:
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
+  set(CMAKE_BUILD_TYPE Debug)
+#  set(CMAKE_BUILD_TYPE Release)
 endif()
 
 # Set a default parallel build level if the user hasn't specified one.
@@ -79,7 +80,7 @@ FetchContent_MakeAvailable(GoogleBenchmark)
 # FetchContent_MakeAvailable(VictorZverovichFMT)
 
 
-# Remove Google Benchmark's built-in debug warning in Release mode:
+# Release configuration: Remove Google Benchmark's built-in debug warnings
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
   target_compile_definitions(benchmark PRIVATE NDEBUG)
 endif()
@@ -96,6 +97,14 @@ file(GLOB TEST_SOURCES LIST_DIRECTORIES false
 add_executable (drills "drills.cpp" ${TEST_SOURCES})
 
 option(DRILLS_BUILD_TESTS "Build the test suite" ON)
+
+# Debug configuration: Edit-and-Continue (/ZI) for MSVC
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  if(MSVC)
+  target_compile_definitions(drills PRIVATE "/ZI")
+  endif()
+endif()
+
 
 set_target_properties(drills PROPERTIES 
   POSITION_INDEPENDENT_CODE ON)
