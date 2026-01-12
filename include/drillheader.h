@@ -81,6 +81,7 @@ const double PI  = acos(-1.0);
 #define MP make_pair
 // #define B begin()
 // #define E end()
+#define SW swap
 
 // ranges
 #define WITHIN(i, n) ((i) >= 0 && (i) < (n))
