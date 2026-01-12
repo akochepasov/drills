@@ -5,6 +5,7 @@
 #include <mutex>
 #include <thread>
 #include <chrono>
+#include <immintrin.h>
 #include <gtest/gtest.h>
 
 template<typename T>
@@ -64,8 +65,9 @@ TEST(SpinLock, CAS) {
     for (int t = 0; t < threads_count; t++) {
         threads.emplace_back([=, &start_mtx, &start_flag, &start_cv, &ready_count, &spinLock]() {
             ready_count--;
-            {   
-                start_cv.wait(std::unique_lock(start_mtx), [&]() { return start_flag; });
+            {
+                std::unique_lock lock(start_mtx);
+                start_cv.wait(lock, [&]() { return start_flag; });
 //                std::cout << "Thread " << t << " started\n";
             }
 
