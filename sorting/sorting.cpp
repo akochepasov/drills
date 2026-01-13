@@ -47,22 +47,43 @@ void BubbleSort(std::vector<int>& arr) {
     }
 }
 
-size_t LowerBound(std::vector<int>& arr, int v) {
-    
-    if (arr.size() == 0) return arr.size();
+// LowerBound and UpperBound are the same,
+// except the if condition.
+size_t LowerBound(VI& arr, int target) {
+    auto n = SZ(arr);
+    size_t res = n;
 
-    size_t l = 0, r = arr.size();
+    int l = 0, r = n - 1;
 
-    while (l < r) {
+    while (l <= r) {
         auto m = l + (r - l) / 2;
 
-        if (arr[m] < v)
+        if (arr[m] < target) { // <= in UpperBound
             l = m + 1;
-        else
-            r = m;
+        } else {
+            res = m;
+            r = m - 1;
+        }
     }
+    return res;
+}
 
-    return (l < arr.size() && arr[l] < v) ? r + 1 : l;
+size_t UpperBound(std::vector<int>& arr, int target) {
+    auto n = SZ(arr);
+    size_t res = n;
+    int l = 0, r = n - 1;
+
+    while (l <= r) {
+        auto m = l + (r - l) / 2;
+
+        if (arr[m] <= target) {  // < in LowerBound
+            l = m + 1;
+        } else {
+            res = m;
+            r = m - 1;
+        }
+    }
+    return res;
 }
 
 struct ArrayParams {
@@ -84,7 +105,7 @@ public:
         const auto& params = GetParam();
         arr.resize(params.size);
         params.generator(arr);
-        
+
         expected.assign(ALL(arr));
         std::sort(ALL(expected));
     }
@@ -105,13 +126,36 @@ TEST_P(SortingTest, LowerBound) {
 
     int m = arr.size() / 2;
     int m2 = min<int>(3, m / 2);
-    int m3 = min<int>(2, 2 * m / 3);
-    std::array<int, 5> ndxs = {0, static_cast<int>(arr.size()), 1, m, m2};
+    int m3 = min<int>(10, 2 * m / 3);
+    VI ndxs = { 0, static_cast<int>(arr.size()), 1, m, m2, m3 };
+    if (arr.size() >= 10) {
+        ndxs.push_back(rand() % arr.size());
+    }
 
     for (auto i : ndxs) {
         auto v = (i < arr.size()) ? arr[i] : i;
         size_t lb = LowerBound(arr, v);
         auto it = std::lower_bound(ALL(arr), v);
+        size_t lbe = (it != arr.end()) ? it - arr.begin() : arr.size();
+        EXPECT_EQ(lb, lbe);
+    }
+}
+
+TEST_P(SortingTest, UpperBound) {
+    std::sort(ALL(arr));
+
+    int m = arr.size() / 2;
+    int m2 = min<int>(3, m / 2);
+    int m3 = min<int>(2, 2 * m / 3);
+    VI ndxs = { 0, static_cast<int>(arr.size()), 1, m, m2, m3 };
+    if (arr.size() >= 10) {
+        ndxs.push_back(rand() % arr.size());
+    }
+
+    for (auto i : ndxs) {
+        auto v = (i < arr.size()) ? arr[i] : i;
+        size_t lb = UpperBound(arr, v);
+        auto it = std::upper_bound(ALL(arr), v);
         size_t lbe = (it != arr.end()) ? it - arr.begin() : arr.size();
         EXPECT_EQ(lb, lbe);
     }
